@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCountry, countryThemes } from '../context/CountryContext';
 import { useNavigate } from 'react-router-dom';
+import logo from './images'; 
 export default function Navbar() {
   const { currentCountry, setCurrentCountry, theme, cart, removeFromCart, cartTotal, cartCount, clearCart, user } = useCountry();
   const location = useLocation();
@@ -12,10 +13,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
-        
-
-        <Link to="/" className="flex items-center space-x-2 shrink-0">
-          <span className="text-2xl">🌍</span>
+    <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+        <logo />
           <div>
             <span className="text-sm font-black uppercase tracking-tight text-slate-900 block">Кухни Мира</span>
           </div>
