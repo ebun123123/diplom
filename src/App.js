@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import { CountryProvider } from './context/CountryContext'; 
 import Navbar from './components/Navbar';
