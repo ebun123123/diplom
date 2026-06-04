@@ -13,13 +13,10 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
-    <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-        <logo />
-          <div>
-            <span className="text-sm font-black uppercase tracking-tight text-slate-900 block">Кухни Мира</span>
-          </div>
-        </Link>
-        
+      <Link to="/" className="flex items-center gap-3">
+      <logo /> 
+      <span className="text-xl font-bold">Кухни Мира</span>
+      </Link>
         
         <nav className="hidden lg:flex items-center space-x-6 text-xs font-bold uppercase tracking-wider">
           <Link to="/" className={isActive('/') ? theme.textColor : 'text-slate-600 hover:text-slate-900'}>Главная</Link>
