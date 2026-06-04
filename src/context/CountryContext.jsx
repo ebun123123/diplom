@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
 const CountryContext = createContext();
 
@@ -30,7 +30,7 @@ export function CountryProvider({ children }) {
   const [currentCountry, setCurrentCountry] = useState('it');
   const [cart, setCart] = useState([]);
   
-  // --- НОВОЕ: Состояние пользователя ---
+
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('diplom_user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -58,7 +58,6 @@ export function CountryProvider({ children }) {
   const cartTotal = cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantity, 0);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // --- НОВОЕ: Функции регистрации и логина ---
   const registerUser = (userData) => {
     localStorage.setItem('diplom_registered_user', JSON.stringify(userData));
     setUser(userData);
