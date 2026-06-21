@@ -9,6 +9,7 @@ import Menu from './pages/Menu';
 import Contact from './pages/Contact';
 import Auth from './pages/Auth';
 import Checkout from './pages/Checkout';
+import CookieBanner from './components/CookieBanner'; 
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = !!localStorage.getItem('token'); 
@@ -28,15 +29,17 @@ export default function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               
+              <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
+              <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
               <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             </Routes>
           </main>
           <Footer />
+          
+          <CookieBanner />
         </div>
       </Router>
     </CountryProvider>
