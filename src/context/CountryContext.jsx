@@ -15,7 +15,7 @@ export const countryThemes = {
     primaryColor: 'bg-red-600', hoverColor: 'hover:bg-red-700', textColor: 'text-red-600',
     accentBg: 'bg-red-50', gradient: 'from-slate-50 via-white to-red-50/30',
     heroTitle: 'Философия баланса и свежести востока',
-    heroDesc: 'Тонкое искусство японской кулинарии. Свежайшие морепродукты, традиционный рамен и гармония в каждой детали.'
+    heroDesc: 'Тонкое искусство японской кулинарии. Свежайшие морепродукты,传统ный рамен и гармония в каждой детали.'
   },
   mx: {
     id: 'mx', name: 'Мексика', flag: '🇲🇽',
@@ -30,7 +30,6 @@ export function CountryProvider({ children }) {
   const [currentCountry, setCurrentCountry] = useState('it');
   const [cart, setCart] = useState([]);
   
-
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('diplom_user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -60,26 +59,27 @@ export function CountryProvider({ children }) {
 
   const registerUser = (userData) => {
     localStorage.setItem('diplom_registered_user', JSON.stringify(userData));
-    setUser(userData);
     localStorage.setItem('diplom_user', JSON.stringify(userData));
+    setUser(userData);
   };
 
   const loginUser = (email, password) => {
     const registered = localStorage.getItem('diplom_registered_user');
-    if (!registered) return { success: false, message: 'Пользователь не найден!' };
+    if (!registered) return { success: false, message: 'Пользователь не найден в ИС!' };
     
     const parsed = JSON.parse(registered);
     if (parsed.email === email && parsed.password === password) {
-      setUser(parsed);
       localStorage.setItem('diplom_user', JSON.stringify(parsed));
+      setUser(parsed);
       return { success: true };
     }
     return { success: false, message: 'Неверный пароль или email!' };
   };
 
   const logoutUser = () => {
-    setUser(null);
     localStorage.removeItem('diplom_user');
+    setUser(null);
+    setCart([]);
   };
 
   return (

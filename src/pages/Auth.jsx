@@ -95,21 +95,18 @@ export default function Auth() {
         return;
       }
       registerUser(formData);
-      localStorage.setItem('token', 'true');
-      alert('Регистрация успешна! Данные сохранены в системе.');
+      alert('Регистрация успешна! Вход в систему выполнен.');
       navigate('/');
     } else {
       const res = loginUser(formData.email, formData.password);
       if (res && res.success) {
-        localStorage.setItem('token', 'true');
-        alert('Успешный вход в ИС!');
+        alert('Успешный вход в ИС ресторана!');
         navigate('/');
       } else {
         setError(res ? res.message : 'Ошибка авторизации');
       }
     }
   };
-
   const handleLogout = () => {
     localStorage.removeItem('token');
     logoutUser();
