@@ -7,14 +7,16 @@ export default function Auth() {
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [agreed, setAgreed] = useState(false); // Стейт для согласия на обработку ПД
-  const navigate = useNavigate();
+  
+  const [agreed, setAgreed] = useState(false); 
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false); 
 
   const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
-  
   const [touched, setTouched] = useState({ name: false, email: false, password: false, phone: false });
   const [errors, setErrors] = useState({});
   const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: '', color: 'bg-slate-200' });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newErrors = {};
@@ -229,7 +231,6 @@ export default function Auth() {
           )}
         </div>
 
-        {/* ЧЕКБОКС СОГЛАСИЯ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ */}
         {isRegister && (
           <div className="flex items-start space-x-2 pt-1">
             <input 
@@ -240,7 +241,15 @@ export default function Auth() {
               className="mt-0.5 h-3.5 w-3.5 text-slate-950 border-slate-300 rounded focus:ring-0 accent-slate-900 cursor-pointer"
             />
             <label htmlFor="privacy" className="text-[10px] text-slate-500 leading-tight cursor-pointer select-none">
-              Я даю согласие на <span className="underline font-medium text-slate-700">обработку персональных данных</span> в соответствии с Политикой конфиденциальности.
+              Я даю согласие на{' '}
+              <button
+                type="button"
+                onClick={() => setShowPrivacyModal(true)}
+                className="underline font-medium text-slate-700 hover:text-slate-950 transition-colors inline"
+              >
+                обработку персональных данных
+              </button>{' '}
+              в соответствии с Политикой конфиденциальности.
             </label>
           </div>
         )}
@@ -263,6 +272,56 @@ export default function Auth() {
           {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
         </button>
       </div>
+
+      {showPrivacyModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[70vh] flex flex-col shadow-xl border border-slate-100">
+            
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center shrink-0">
+              <h3 className="text-xs font-black text-slate-900 uppercase tracking-wider">Согласие на обработку ПД</h3>
+              <button 
+                type="button" 
+                onClick={() => setShowPrivacyModal(false)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold px-2 py-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-4 overflow-y-auto text-[11px] text-slate-600 space-y-3 leading-relaxed">
+              <p className="font-bold text-slate-800">Согласие пользователя на обработку персональных данных в ИС Ресторана</p>
+              <p>
+                В соответствии с Федеральным законом № 152-ФЗ «О персональных данных», регистрируясь в нашей Информационной Системе, вы подтверждаете свое согласие на автоматизированную и ручную обработку ваших персональных данных.
+              </p>
+              <p className="font-semibold text-slate-700">1. Перечень собираемых данных:</p>
+              <ul className="list-disc list-inside pl-1 space-y-1">
+                <li>Имя (для обращения и персонализации в ИС);</li>
+                <li>Номер мобильного телефона (для подтверждения бронирования столов);</li>
+                <li>Адрес электронной почты (для авторизации, отправки чеков и уведомлений).</li>
+              </ul>
+              <p className="font-semibold text-slate-700">2. Цели обработки:</p>
+              <p>
+                Предоставление доступа к функционалу ИС: авторизация, сохранение истории заказов, онлайн-оформление доставки, а также резервирование посадочных мест в ресторанном комплексе.
+              </p>
+              <p className="font-semibold text-slate-700">3. Сроки и безопасность:</p>
+              <p>
+                Данные хранятся локально в сессионном хранилище вашей системы и защищены встроенными протоколами шифрования. Согласие действует бессрочно и может быть отозвано путем удаления аккаунта.
+              </p>
+            </div>
+
+            <div className="p-3 border-t border-slate-100 bg-slate-50 flex justify-end shrink-0 rounded-b-2xl">
+              <button
+                type="button"
+                onClick={() => { setAgreed(true); setShowPrivacyModal(false); }}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold rounded-lg transition-colors"
+              >
+                Ознакомлен и согласен
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
