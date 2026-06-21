@@ -9,7 +9,7 @@ import Menu from './pages/Menu';
 import Contact from './pages/Contact';
 import Auth from './pages/Auth';
 import Checkout from './pages/Checkout';
-import CookieBanner from './components/CookieBanner'; 
+import CookieBanner from './components/CookieBanner';
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = !!localStorage.getItem('token'); 
@@ -29,16 +29,19 @@ export default function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
+              {/* ОТКРЫТЫЕ СТРАНИЦЫ (Доступны всем без регистрации) */}
+              <Route path="/" element={<Home />} />
+              <Route path="/menu" element={<Menu />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               
-              <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-              <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
-              <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+              {/* ЗАЩИЩЕННЫЕ СТРАНИЦЫ (Только для зарегистрированных) */}
               <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              {/* Если бронирование столов — это отдельная страница, добавьте её сюда: */}
+              {/* <Route path="/booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} /> */}
             </Routes>
           </main>
           <Footer />
-          
           <CookieBanner />
         </div>
       </Router>

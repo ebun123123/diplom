@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { useCountry } from '../context/CountryContext';
 
 const importAll = (r) => {
@@ -6,7 +7,6 @@ const importAll = (r) => {
   r.keys().forEach((item) => { images[item.replace('./', '')] = r(item); });
   return images;
 };
-require.context('', false, /\.(png|jpe?g|svg)$/)
 
 const DISHES_DATABASE = {
   it: [
@@ -58,6 +58,7 @@ const PLACEHOLDER_IMAGE = '';
 export default function Menu() {
   const { currentCountry, theme, addToCart } = useCountry();
   const [activeCategory, setActiveCategory] = useState('Все');
+  const navigate = useNavigate(); 
   
   const allDishes = DISHES_DATABASE[currentCountry] || [];
   
@@ -74,6 +75,17 @@ export default function Menu() {
   const handleImgError = (e) => {
     e.target.onerror = null; 
     e.target.src = PLACEHOLDER_IMAGE;
+  };
+
+  const handleAddToCartClick = (dish) => {
+    const isAuthenticated = !!localStorage.getItem('token');
+
+    if (!isAuthenticated) {
+      alert('Для добавления блюд в корзину необходимо авторизоваться в системе!');
+      navigate('/auth'); 
+    } else {
+      addToCart(dish); 
+    }
   };
 
   return (
@@ -141,7 +153,7 @@ export default function Menu() {
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
                   <span className="text-lg font-black text-slate-900">{dish.price}</span>
                   <button 
-                    onClick={() => addToCart(dish)}
+                    onClick={() => handleAddToCartClick(dish)}
                     className={`text-xs font-bold text-white px-3 py-2 rounded-lg transition-colors ${theme.primaryColor} ${theme.hoverColor}`}
                   >
                     + В корзину
