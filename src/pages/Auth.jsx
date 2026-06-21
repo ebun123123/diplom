@@ -9,9 +9,7 @@ export default function Auth() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
- 
   const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
-  
   
   const [touched, setTouched] = useState({ name: false, email: false, password: false, phone: false });
   const [errors, setErrors] = useState({});
@@ -20,25 +18,21 @@ export default function Auth() {
   useEffect(() => {
     const newErrors = {};
     
-    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailRegex.test(formData.email)) {
       newErrors.email = 'Некорректный формат email';
     }
 
-    
     if (isRegister && formData.name && formData.name.length < 2) {
       newErrors.name = 'Имя должно быть не короче 2-х символов';
     }
 
-    
     if (isRegister && formData.phone && formData.phone.replace(/\D/g, '').length < 11) {
       newErrors.phone = 'Введите номер полностью';
     }
 
     setErrors(newErrors);
 
-    
     if (isRegister && formData.password) {
       const pass = formData.password;
       let score = 0;
@@ -62,7 +56,6 @@ export default function Auth() {
 
   }, [formData, isRegister]);
 
-  
   const handlePhoneChange = (e) => {
     let input = e.target.value.replace(/\D/g, ''); 
     if (input.startsWith('7') || input.startsWith('8')) input = input.substring(1);
@@ -84,7 +77,6 @@ export default function Auth() {
     e.preventDefault();
     setError('');
 
- 
     if (Object.keys(errors).length > 0) {
       setError('Пожалуйста, исправьте ошибки в форме перед отправкой.');
       return;
@@ -96,17 +88,28 @@ export default function Auth() {
         return;
       }
       registerUser(formData);
+      // Записываем токен сессии для ProtectedRoute при регистрации
+      localStorage.setItem('token', 'true');
       alert('Регистрация успешна! Данные сохранены в системе.');
       navigate('/');
-    } else {
+    } {
       const res = loginUser(formData.email, formData.password);
-      if (res.success) {
+      if (res && res.success) {
+        // Записываем токен сессии для ProtectedRoute при логине
+        localStorage.setItem('token', 'true');
         alert('Успешный вход в ИС!');
         navigate('/');
       } else {
-        setError(res.message);
+        setError(res ? res.message : 'Ошибка авторизации');
       }
     }
+  };
+
+  // Метод для полного логаута
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // удаляем токен защиты
+    logoutUser(); // вызываем стандартный выход из контекста
+    navigate('/auth');
   };
 
   if (user) {
@@ -123,7 +126,7 @@ export default function Auth() {
           <p><strong>Токен сессии:</strong> active_local_storage_session</p>
         </div>
 
-        <button onClick={logoutUser} className="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2.5 rounded-lg transition-colors">
+        <button onClick={handleLogout} className="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2.5 rounded-lg transition-colors">
           Выйти из аккаунта
         </button>
       </div>

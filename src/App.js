@@ -28,11 +28,11 @@ export default function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/menu" element={<Menu />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               
-              <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-              <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
-              <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
               <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             </Routes>
           </main>
