@@ -7,6 +7,7 @@ export default function Auth() {
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false); // Стейт для согласия на обработку ПД
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ name: '', email: '', password: '', phone: '' });
@@ -83,19 +84,21 @@ export default function Auth() {
     }
 
     if (isRegister) {
+      if (!agreed) {
+        setError('Необходимо дать согласие на обработку персональных данных.');
+        return;
+      }
       if (formData.password.length < 4) {
         setError('Пароль слишком короткий!');
         return;
       }
       registerUser(formData);
-      // Записываем токен сессии для ProtectedRoute при регистрации
       localStorage.setItem('token', 'true');
       alert('Регистрация успешна! Данные сохранены в системе.');
       navigate('/');
-    } {
+    } else {
       const res = loginUser(formData.email, formData.password);
       if (res && res.success) {
-        // Записываем токен сессии для ProtectedRoute при логине
         localStorage.setItem('token', 'true');
         alert('Успешный вход в ИС!');
         navigate('/');
@@ -105,10 +108,9 @@ export default function Auth() {
     }
   };
 
-  // Метод для полного логаута
   const handleLogout = () => {
-    localStorage.removeItem('token'); // удаляем токен защиты
-    logoutUser(); // вызываем стандартный выход из контекста
+    localStorage.removeItem('token');
+    logoutUser();
     navigate('/auth');
   };
 
@@ -227,11 +229,27 @@ export default function Auth() {
           )}
         </div>
 
+        {/* ЧЕКБОКС СОГЛАСИЯ НА ОБРАБОТКУ ПЕРСОНАЛЬНЫХ ДАННЫХ */}
+        {isRegister && (
+          <div className="flex items-start space-x-2 pt-1">
+            <input 
+              type="checkbox" 
+              id="privacy"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-0.5 h-3.5 w-3.5 text-slate-950 border-slate-300 rounded focus:ring-0 accent-slate-900 cursor-pointer"
+            />
+            <label htmlFor="privacy" className="text-[10px] text-slate-500 leading-tight cursor-pointer select-none">
+              Я даю согласие на <span className="underline font-medium text-slate-700">обработку персональных данных</span> в соответствии с Политикой конфиденциальности.
+            </label>
+          </div>
+        )}
+
         <button 
           type="submit" 
-          disabled={isRegister && Object.keys(errors).length > 0}
+          disabled={(isRegister && Object.keys(errors).length > 0) || (isRegister && !agreed)}
           className={`w-full text-white text-xs font-bold py-2.5 rounded-lg shadow-sm transition-all ${
-            isRegister && Object.keys(errors).length > 0 
+            (isRegister && Object.keys(errors).length > 0) || (isRegister && !agreed)
               ? 'bg-slate-300 cursor-not-allowed shadow-none' 
               : `${theme.primaryColor} ${theme.hoverColor}`
           }`}
@@ -241,7 +259,7 @@ export default function Auth() {
       </form>
 
       <div className="text-center mt-6 pt-4 border-t text-xs">
-        <button onClick={() => { setIsRegister(!isRegister); setError(''); setTouched({}); }} className="text-slate-500 hover:underline">
+        <button onClick={() => { setIsRegister(!isRegister); setError(''); setTouched({}); setAgreed(false); }} className="text-slate-500 hover:underline">
           {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
         </button>
       </div>

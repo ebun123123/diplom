@@ -4,7 +4,6 @@ export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Проверяем, принимал ли пользователь куки ранее
     const cookieAccepted = localStorage.getItem('cookieAccepted');
     if (!cookieAccepted) {
       setIsVisible(true);
@@ -12,7 +11,6 @@ export default function CookieBanner() {
   }, []);
 
   const handleAccept = () => {
-    // Имитируем сбор куки и сохраняем выбор в localStorage
     localStorage.setItem('cookieAccepted', 'true');
     setIsVisible(false);
   };
