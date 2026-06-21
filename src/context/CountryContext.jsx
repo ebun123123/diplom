@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const CountryContext = createContext();
 
@@ -15,7 +15,7 @@ export const countryThemes = {
     primaryColor: 'bg-red-600', hoverColor: 'hover:bg-red-700', textColor: 'text-red-600',
     accentBg: 'bg-red-50', gradient: 'from-slate-50 via-white to-red-50/30',
     heroTitle: 'Философия баланса и свежести востока',
-    heroDesc: 'Тонкое искусство японской кулинарии. Свежайшие морепродукты,传统ный рамен и гармония в каждой детали.'
+    heroDesc: 'Тонкое искусство японской кулинарии. Свежайшие морепродукты, традиционный рамен и гармония в каждой детали.'
   },
   mx: {
     id: 'mx', name: 'Мексика', flag: '🇲🇽',
@@ -34,6 +34,15 @@ export function CountryProvider({ children }) {
     const savedUser = localStorage.getItem('diplom_user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
+
+  const [orders, setOrders] = useState(() => {
+    const savedOrders = localStorage.getItem('diplom_orders');
+    return savedOrders ? JSON.parse(savedOrders) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('diplom_orders', JSON.stringify(orders));
+  }, [orders]);
 
   const theme = countryThemes[currentCountry];
 
@@ -82,10 +91,28 @@ export function CountryProvider({ children }) {
     setCart([]);
   };
 
+  const createOrder = () => {
+    if (cart.length === 0) return false;
+    
+    const newOrder = {
+      id: `ORD-${Date.now()}`,
+      date: new Date().toLocaleDateString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+      items: [...cart],
+      total: cartTotal,
+      userEmail: user ? user.email : 'guest'
+    };
+
+    setOrders((prevOrders) => [newOrder, ...prevOrders]);
+    clearCart();
+    return true;
+  };
+
+  const userOrders = orders.filter(order => order.userEmail === (user ? user.email : ''));
+
   return (
     <CountryContext.Provider value={{ 
       currentCountry, setCurrentCountry, theme, cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount,
-      user, registerUser, loginUser, logoutUser
+      user, registerUser, loginUser, logoutUser, createOrder, userOrders
     }}>
       {children}
     </CountryContext.Provider>
