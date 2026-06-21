@@ -69,14 +69,14 @@ export default function Menu() {
     e.target.src = PLACEHOLDER_IMAGE;
   };
 
-  const handleAddToCartClick = (dish) => {
+ const handleAddToCartClick = (dish) => {
     const isAuthenticated = !!localStorage.getItem('token');
 
     if (!isAuthenticated) {
       alert('Для добавления блюд в корзину необходимо авторизоваться в системе!');
-      navigate('/auth'); 
+      window.location.href = '/auth'; 
     } else {
-      addToCart(dish); 
+      addToCart(dish);
     }
   };
 
@@ -85,7 +85,6 @@ export default function Menu() {
       <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-900">Аутентичное меню: {theme.name}</h1>
-          <p className="text-xs text-slate-400 mt-1">Используйте фильтры ИС для выбора категорий блюд.</p>
         </div>
 
         <div className="flex flex-wrap gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start">
