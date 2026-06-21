@@ -2,12 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { useCountry } from '../context/CountryContext';
 
-const importAll = (r) => {
-  let images = {};
-  r.keys().forEach((item) => { images[item.replace('./', '')] = r(item); });
-  return images;
-};
-
 const DISHES_DATABASE = {
   it: [
     { id: 'it-soup-1', category: 'Супы', name: 'Минестроне с соусом песто', desc: 'Традиционный итальянский густой суп из сезонных овощей, фасоли и пасты, подается с ароматным базиликовым песто.', weight: '350г', info: '210 ккал', price: '380 ₽', img: "/images/dishes/minestrone.jpg" },
