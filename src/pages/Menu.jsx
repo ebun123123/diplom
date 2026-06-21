@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
 import { useCountry } from '../context/CountryContext';
 
 const DISHES_DATABASE = {
   it: [
-    { id: 'it-soup-1', category: 'Супы', name: 'Минестроне с соусом песто', desc: 'Традиционный итальянский густой суп из сезонных овощей, фасоли и пасты, подается с ароматным базиликовым песто.', weight: '350г', info: '210 ккал', price: '380 ₽', img: "/images/dishes/minestrone.jpg" },
+    { id: 'it-soup-1', category: 'Супы', name: 'Минестроне с соусом песто', desc: 'Традиционный итальянский густой суп из сезонных овощей, фасоли и пасты, подается с ароматным базиликовым песто.', weight: '350г', info: '210 ккал', price: '380 ₽', img: "" },
     { id: 'it-soup-2', category: 'Супы', name: 'Томатный суп с морепродуктами', desc: 'Пряный суп на основе протертых томатов Пелати с добавлением тигровых креветок, кальмаров, мидий и чесночных гренок.', weight: '400г', info: '340 ккал', price: '590 ₽', img: "" },
     { id: 'it-soup-3', category: 'Супы', name: 'Крем-суп из белых грибов', desc: 'Бархатистый суп-пюре из лесных белых грибов и шампиньонов на основе фермерских сливок с добавлением хрустящих сухариков.', weight: '300г', info: '290 ккал', price: '420 ₽', img: "" },
     { id: 'it-main-1', category: 'Горячее', name: 'Пицца Кватро Формаджи', desc: 'Тонкое хрустящее тесто, благородный дорблю, нежная моцарелла, ароматный пармезан и сливочный сыр гауда с прованскими травами.', weight: '420г', info: '610 ккал', price: '690 ₽', img: "" },
@@ -47,10 +46,11 @@ const DISHES_DATABASE = {
   ]
 };
 
+const PLACEHOLDER_IMAGE = '';
+
 export default function Menu() {
   const { currentCountry, theme, addToCart } = useCountry();
   const [activeCategory, setActiveCategory] = useState('Все');
-  const navigate = useNavigate(); 
   
   const allDishes = DISHES_DATABASE[currentCountry] || [];
   
@@ -69,12 +69,12 @@ export default function Menu() {
     e.target.src = PLACEHOLDER_IMAGE;
   };
 
- const handleAddToCartClick = (dish) => {
+  const handleAddToCartClick = (dish) => {
     const isAuthenticated = !!localStorage.getItem('token');
 
     if (!isAuthenticated) {
       alert('Для добавления блюд в корзину необходимо авторизоваться в системе!');
-      window.location.href = '/auth'; 
+      window.location.href = '/auth';
     } else {
       addToCart(dish);
     }
@@ -85,6 +85,7 @@ export default function Menu() {
       <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-900">Аутентичное меню: {theme.name}</h1>
+          <p className="text-xs text-slate-400 mt-1">Используйте фильтры ИС для выбора категорий блюд.</p>
         </div>
 
         <div className="flex flex-wrap gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start">
@@ -110,7 +111,7 @@ export default function Menu() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
           {filteredDishes.map((dish) => (
-            <div key={dish.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow h-full">
+            <div key={dish.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md hover:-translate-y-1 transition-all duration-300 h-full">
               
               <div className="flex flex-col flex-grow">
                 <div className="h-44 bg-slate-100 overflow-hidden relative shrink-0">
@@ -145,7 +146,7 @@ export default function Menu() {
                   <span className="text-lg font-black text-slate-900">{dish.price}</span>
                   <button 
                     onClick={() => handleAddToCartClick(dish)}
-                    className={`text-xs font-bold text-white px-3 py-2 rounded-lg transition-colors ${theme.primaryColor} ${theme.hoverColor}`}
+                    className={`text-xs font-bold text-white px-3 py-2 rounded-lg transition-all duration-300 active:scale-95 ${theme.primaryColor} ${theme.hoverColor}`}
                   >
                     + В корзину
                   </button>
