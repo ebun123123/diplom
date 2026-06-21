@@ -83,7 +83,7 @@ export default function Contact() {
             <div className="mt-4 p-3 rounded-lg border border-slate-200 bg-slate-50 text-xs text-slate-700">
               <p className="font-bold text-slate-900 mb-1">🎫 Бронь успешно зафиксирована!</p>
               <p>Номер талона: <strong>№{ticket.id}</strong></p>
-              <p>Регион: {ticket.countryName} | Мест: {ticket.guests} персоны</p>
+              <p>Мест: {ticket.guests} персоны</p>
             </div>
           )}
         </div>
