@@ -1,6 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import { CountryProvider } from './context/CountryContext'; 
 import Navbar from './components/Navbar';
@@ -11,6 +10,15 @@ import Contact from './pages/Contact';
 import Auth from './pages/Auth';
 import Checkout from './pages/Checkout';
 
+function ProtectedRoute({ children }) {
+  const isAuthenticated = !!localStorage.getItem('token'); 
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return children;
+}
 
 export default function App() {
   return (
@@ -20,11 +28,12 @@ export default function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/checkout" element={<Checkout />} />
+              
+              <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
+              <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             </Routes>
           </main>
           <Footer />
