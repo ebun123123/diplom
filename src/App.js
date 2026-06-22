@@ -29,16 +29,12 @@ export default function App() {
           <Navbar />
           <main className="flex-grow">
             <Routes>
-              {/* ОТКРЫТЫЕ СТРАНИЦЫ (Доступны всем без регистрации) */}
               <Route path="/" element={<Home />} />
               <Route path="/menu" element={<Menu />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               
-              {/* ЗАЩИЩЕННЫЕ СТРАНИЦЫ (Только для зарегистрированных) */}
               <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-              {/* Если бронирование столов — это отдельная страница, добавьте её сюда: */}
-              {/* <Route path="/booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} /> */}
             </Routes>
           </main>
           <Footer />
