@@ -63,8 +63,14 @@ export function CountryProvider({ children }) {
   };
 
   const clearCart = () => setCart([]);
-  const cartTotal = cart.reduce((sum, item) => sum + parseInt(item.price) * item.quantity, 0);
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const cartTotal = cart.reduce((sum, item) => {
+    const priceStr = item.price ? String(item.price) : '0';
+    const numericPrice = parseInt(priceStr.replace(/\D/g, ''), 10) || 0;
+    return sum + (numericPrice * (item.quantity || 1));
+  }, 0);
+
+  const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
   const registerUser = (userData) => {
     localStorage.setItem('diplom_registered_user', JSON.stringify(userData));
