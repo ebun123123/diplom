@@ -12,7 +12,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between gap-4">
-      <img src="/images/logo.svg" alt="Логотип" className="w-12 h-12" />
+      <img src="/images/logo.jpg" alt="Логотип" className="w-12 h-12" />
       <span className="text-xl font-bold">Кухни Мира</span>
         
         <nav className="hidden lg:flex items-center space-x-6 text-xs font-bold uppercase tracking-wider">

@@ -11,7 +11,6 @@ import Auth from './pages/Auth';
 import Checkout from './pages/Checkout';
 import CookieBanner from './components/CookieBanner';
 
-// Импортируем наш защищенный роут из папки компонентов
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
