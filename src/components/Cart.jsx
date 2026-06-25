@@ -6,9 +6,9 @@ export default function Cart() {
   const { cart, theme, removeFromCart, createOrder, cartTotal } = useCountry();
   const navigate = useNavigate();
 
-  // Функция для безопасного отображения цен в списке блюд
   const parsePrice = (priceStr) => {
-    return parseInt(priceStr.replace(/[^0-9]/g, ''), 10) || 0;
+    const str = priceStr ? String(priceStr) : '0';
+    return parseInt(str.replace(/\D/g, ''), 10) || 0;
   };
 
   const handleCheckoutClick = () => {
@@ -34,27 +34,33 @@ export default function Cart() {
       <h2 className="text-lg font-black text-slate-900 mb-4">Ваша корзина</h2>
       
       <div className="divide-y divide-slate-100 max-h-60 overflow-y-auto mb-4">
-        {cart.map((item) => (
-          <div key={item.id} className="py-3 flex items-center justify-between gap-4">
-            <div className="flex-grow">
-              <h4 className="text-xs font-bold text-slate-800">
-                {item.name} <span className="text-slate-400 font-normal">x{item.quantity || 1}</span>
-              </h4>
-              <p className="text-[10px] text-slate-400">{item.weight}</p>
+        {cart.map((item) => {
+          const basePrice = parsePrice(item.price);
+          const quantity = item.quantity || 1;
+          const itemTotalPrice = basePrice * quantity;
+
+          return (
+            <div key={item.id} className="py-3 flex items-center justify-between gap-4">
+              <div className="flex-grow">
+                <h4 className="text-xs font-bold text-slate-800">
+                  {item.name} <span className="text-slate-400 font-normal">x{quantity}</span>
+                </h4>
+                <p className="text-[10px] text-slate-400">{item.weight}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-black text-slate-900">
+                  {itemTotalPrice} ₽
+                </span>
+                <button 
+                  onClick={() => removeFromCart(item.id)}
+                  className="text-slate-400 hover:text-rose-500 transition-colors text-sm font-bold px-1"
+                >
+                  ×
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-black text-slate-900">
-                {parsePrice(item.price) * (item.quantity || 1)} ₽
-              </span>
-              <button 
-                onClick={() => removeFromCart(item.id)}
-                className="text-slate-400 hover:text-rose-500 transition-colors text-sm font-bold px-1"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="border-t border-slate-100 pt-4">
