@@ -46,34 +46,40 @@ export function CountryProvider({ children }) {
 
   const theme = countryThemes[currentCountry];
 
+  // ИСПРАВЛЕНО: Полная иммутабельность стейта с гарантированным инкрементом числового значения quantity
   const addToCart = (dish) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === dish.id);
-      if (existing) {
-        return prevCart.map((item) =>
-          item.id === dish.id 
-            ? { ...item, quantity: Number(item.quantity || 1) + 1 } 
-            : item
-        );
+      const existingIndex = prevCart.findIndex((item) => String(item.id) === String(dish.id));
+      
+      if (existingIndex !== -1) {
+        const newCart = [...prevCart];
+        const currentQty = newCart[existingIndex].quantity;
+        newCart[existingIndex] = {
+          ...newCart[existingIndex],
+          quantity: (Number(currentQty) || 1) + 1
+        };
+        return newCart;
       }
+      
       return [...prevCart, { ...dish, quantity: 1 }];
     });
   };
 
   const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) => prevCart.filter((item) => String(item.id) !== String(id)));
   };
 
   const clearCart = () => setCart([]);
 
+  // ИСПРАВЛЕНО: Функция динамического извлечения стоимости на основе актуального стейта
   const cartTotal = cart.reduce((sum, item) => {
     const priceStr = item.price ? String(item.price) : '0';
     const numericPrice = parseInt(priceStr.replace(/\D/g, ''), 10) || 0;
-    const itemQuantity = Number(item.quantity || 1);
+    const itemQuantity = Number(item.quantity) || 1;
     return sum + (numericPrice * itemQuantity);
   }, 0);
 
-  const cartCount = cart.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
+  const cartCount = cart.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);
 
   const registerUser = (userData) => {
     localStorage.setItem('diplom_registered_user', JSON.stringify(userData));
@@ -103,17 +109,18 @@ export function CountryProvider({ children }) {
   const createOrder = () => {
     if (cart.length === 0) return false;
     
-    const finalTotal = cart.reduce((sum, item) => {
+    // Фиксируем итоговую сумму до вызова очистки корзины
+    const currentTotal = cart.reduce((sum, item) => {
       const priceStr = item.price ? String(item.price) : '0';
       const numericPrice = parseInt(priceStr.replace(/\D/g, ''), 10) || 0;
-      return sum + (numericPrice * Number(item.quantity || 1));
+      return sum + (numericPrice * (Number(item.quantity) || 1));
     }, 0);
 
     const newOrder = {
       id: `ORD-${Date.now()}`,
       date: new Date().toLocaleDateString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
       items: [...cart],
-      total: finalTotal,
+      total: currentTotal,
       userEmail: user ? user.email : 'guest'
     };
 
