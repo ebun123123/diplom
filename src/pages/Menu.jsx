@@ -84,8 +84,8 @@ export default function Menu() {
     <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Аутентичное меню: {theme.name}</h1>
-          <p className="text-xs text-slate-400 mt-1">Используйте фильтры ИС для выбора категорий блюд.</p>
+          <h1 className="text-2xl font-black text-slate-900">Меню: {theme.name}</h1>
+          <p className="text-xs text-slate-400 mt-1">Используйте фильтры для выбора категорий блюд.</p>
         </div>
 
         <div className="flex flex-wrap gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 self-start">
