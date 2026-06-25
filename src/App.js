@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { CountryProvider } from './context/CountryContext'; 
 import Navbar from './components/Navbar';
@@ -11,15 +11,8 @@ import Auth from './pages/Auth';
 import Checkout from './pages/Checkout';
 import CookieBanner from './components/CookieBanner';
 
-function ProtectedRoute({ children }) {
-  const isAuthenticated = !!localStorage.getItem('diplom_user'); 
-
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  return children;
-}
+// Импортируем наш защищенный роут из папки компонентов
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
@@ -34,7 +27,15 @@ export default function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               
-              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              {/* Обертываем Checkout в импортированный компонент ProtectedRoute */}
+              <Route 
+                path="/checkout" 
+                element={
+                  <ProtectedRoute>
+                    <Checkout />
+                  </ProtectedRoute>
+                } 
+              />
             </Routes>
           </main>
           <Footer />

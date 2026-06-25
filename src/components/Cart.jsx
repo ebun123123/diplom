@@ -3,20 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import { useCountry } from '../context/CountryContext';
 
 export default function Cart() {
-  const { cart, theme, removeFromCart, createOrder } = useCountry();
+  const { cart, theme, removeFromCart, createOrder, cartTotal } = useCountry();
   const navigate = useNavigate();
 
+  // Функция для безопасного отображения цен в списке блюд
   const parsePrice = (priceStr) => {
     return parseInt(priceStr.replace(/[^0-9]/g, ''), 10) || 0;
   };
 
-  const total = cart.reduce((sum, item) => sum + (parsePrice(item.price) * (item.quantity || 1)), 0);
-
   const handleCheckoutClick = () => {
     const success = createOrder();
     if (success) {
-      alert('Заказ успешно оформлен!');
-      navigate('/profile'); 
+      alert('Заказ успешно оформлен! Вы можете увидеть его в личном кабинете.');
+      navigate('/auth'); 
     } else {
       alert('Не удалось оформить заказ.');
     }
@@ -61,7 +60,7 @@ export default function Cart() {
       <div className="border-t border-slate-100 pt-4">
         <div className="flex justify-between text-xs mb-4">
           <span className="text-slate-500">Сумма заказа:</span>
-          <span className="font-black text-slate-900">{total} ₽</span>
+          <span className="font-black text-slate-900">{cartTotal} ₽</span>
         </div>
 
         <button 
