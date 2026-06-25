@@ -6,10 +6,6 @@ export default function Checkout() {
   const [deliveryMethod, setDeliveryMethod] = useState('delivery');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [isOrdered, setIsOrdered] = useState(false);
-  
-  // Новый стейт для открытия модального окна СБП
-  const [showSBPModal, setShowSBPModal] = useState(false);
-  const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -22,11 +18,38 @@ export default function Checkout() {
     comment: ''
   });
 
+  // Функция-маска: вырезает все буквы и форматирует только цифры
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+
+    // Очищаем строку от ВСЕХ нецифровых символов (буквы сюда физически не пройдут)
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const numLength = phoneNumber.length;
+
+    if (numLength === 0) return '';
+
+    // Игнорируем стартовую 7 или 8, чтобы не было дублей вида +7 (7... или +7 (8...
+    let startIdx = 0;
+    if (phoneNumber[0] === '7' || phoneNumber[0] === '8') {
+      startIdx = 1;
+    }
+
+    const digits = phoneNumber.substring(startIdx);
+
+    // Строим красивую маску на лету
+    if (digits.length === 0) return '+7 ';
+    if (digits.length <= 3) return `+7 (${digits}`;
+    if (digits.length <= 6) return `+7 (${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    if (digits.length <= 8) return `+7 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    
+    return `+7 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8, 10)}`;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
     if (name === 'phone') {
-      // Здесь твоя функция маски телефона (оставлена для совместимости)
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: formatPhoneNumber(value) }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -36,6 +59,7 @@ export default function Checkout() {
     return parseInt(priceStr.replace(/[^0-9]/g, ''), 10) || 0;
   };
 
+  // Расчет стоимости с учетом количества каждого блюда
   const cartTotal = cart.reduce((sum, item) => {
     const qty = Number(item.quantity || 1);
     return sum + (parsePrice(item.price) * qty);
@@ -46,28 +70,8 @@ export default function Checkout() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (paymentMethod === 'card') {
-      // Если оплата онлайн — сначала показываем QR-код СБП
-      setShowSBPModal(true);
-    } else {
-      // Если при получении — сразу завершаем заказ
-      setIsOrdered(true);
-      clearCart();
-    }
-  };
-
-  // Функция симуляции успешной оплаты по QR-коду
-  const handleFakeSBPSuccess = () => {
-    setIsSimulatingPayment(true);
-    
-    // Имитируем задержку проверки банком в 1.5 секунды
-    setTimeout(() => {
-      setIsSimulatingPayment(false);
-      setShowSBPModal(false);
-      setIsOrdered(true);
-      clearCart();
-    }, 1500);
+    setIsOrdered(true);
+    clearCart();
   };
 
   if (isOrdered) {
@@ -78,7 +82,7 @@ export default function Checkout() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-black text-slate-900">Заказ успешно оплачен и принят!</h2>
+        <h2 className="text-2xl font-black text-slate-900">Заказ успешно принят!</h2>
         <p className="text-slate-500 text-xs mt-3 leading-relaxed">
           Спасибо за заказ. Наш менеджер свяжется с вами по номеру <span className="font-bold text-slate-800">{formData.phone}</span>.
         </p>
@@ -107,7 +111,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 relative">
+    <div className="max-w-6xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-black text-slate-900 mb-8">Оформление заказа</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -133,6 +137,7 @@ export default function Checkout() {
                   name="phone"
                   required
                   placeholder="+7 (999) 000-00-00"
+                  maxLength={18} // Ограничиваем длину строки с учетом маски
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400 transition-colors" 
@@ -216,10 +221,7 @@ export default function Checkout() {
                   onChange={() => setPaymentMethod('card')}
                   className="w-4 h-4 text-slate-900" 
                 />
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-slate-800">Онлайн-оплата через СБП</span>
-                  <span className="bg-slate-900 text-white text-[9px] font-black px-1 rounded">СБП</span>
-                </div>
+                <span className="text-xs font-bold text-slate-800">Онлайн-оплата (СБП / Картой)</span>
               </label>
               <label className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer">
                 <input 
@@ -270,7 +272,7 @@ export default function Checkout() {
             </div>
             <div className="flex justify-between text-base font-black text-slate-900 border-t border-slate-200 mt-4 pt-4">
               <span>Итого:</span>
-              <span>{finalTotal} ₽</span>
+              <span>{deliveryMethod === 'pickup' ? Math.round(cartTotal * 0.9) : finalTotal} ₽</span>
             </div>
           </div>
 
@@ -284,59 +286,10 @@ export default function Checkout() {
             }}
             className={`w-full mt-6 py-3 rounded-xl text-xs font-bold text-white transition-colors ${theme.primaryColor} ${theme.hoverColor}`}
           >
-            {paymentMethod === 'card' ? 'Оплатить через СБП' : 'Подтвердить заказ'}
+            {paymentMethod === 'card' ? 'Оплатить заказ' : 'Подтвердить заказ'}
           </button>
         </div>
       </div>
-
-      {/* КРАСИВОЕ МОДАЛЬНОЕ ОКНО СБП */}
-      {showSBPModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white rounded-3xl border border-slate-100 p-6 max-w-sm w-full text-center shadow-xl">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-1.5 bg-slate-900 text-white text-[10px] font-black px-2 py-0.5 rounded">
-                СБП
-              </div>
-              <button 
-                onClick={() => setShowSBPModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-sm"
-              >
-                ✕
-              </button>
-            </div>
-
-            <h3 className="text-base font-black text-slate-900">Оплата заказа</h3>
-            <p className="text-[11px] text-slate-400 mt-1">Отсканируйте QR-код в приложении вашего банка</p>
-
-            {/* Имитация QR-кода */}
-            <div className="my-6 bg-slate-50 border border-slate-100 p-4 rounded-2xl inline-block relative mx-auto">
-              <img 
-                src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://sbp.nspk.ru/" 
-                alt="QR СБП" 
-                className={`w-44 h-44 mx-auto transition-opacity duration-300 ${isSimulatingPayment ? 'opacity-30' : 'opacity-100'}`}
-              />
-              {isSimulatingPayment && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-slate-50 rounded-xl py-2 px-4 mb-4 flex justify-between items-center text-xs">
-              <span className="text-slate-500 font-medium">К оплате:</span>
-              <span className="font-black text-slate-900 text-sm">{finalTotal} ₽</span>
-            </div>
-
-            <button
-              onClick={handleFakeSBPSuccess}
-              disabled={isSimulatingPayment}
-              className={`w-full py-2.5 rounded-xl text-xs font-bold text-white transition-all ${theme.primaryColor} ${theme.hoverColor} disabled:opacity-50`}
-            >
-              {isSimulatingPayment ? 'Проверка транзакции...' : 'Я оплатил(а)'}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
