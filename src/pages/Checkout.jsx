@@ -27,7 +27,11 @@ export default function Checkout() {
     return parseInt(priceStr.replace(/[^0-9]/g, ''), 10) || 0;
   };
 
-  const cartTotal = cart.reduce((sum, item) => sum + parsePrice(item.price), 0);
+  const cartTotal = cart.reduce((sum, item) => {
+    const qty = Number(item.quantity || 1);
+    return sum + (parsePrice(item.price) * qty);
+  }, 0);
+
   const deliveryPrice = deliveryMethod === 'delivery' && cartTotal < 1500 ? 250 : 0;
   const finalTotal = cartTotal + deliveryPrice;
 
@@ -47,7 +51,7 @@ export default function Checkout() {
         </div>
         <h2 className="text-2xl font-black text-slate-900">Заказ успешно принят!</h2>
         <p className="text-slate-500 text-xs mt-3 leading-relaxed">
-          Спасибо за заказ. Наш менеджер свяжется с вами по номеру <span className="font-bold text-slate-800">{formData.phone}</span>.
+          Спасибо за заказ. Наш manager свяжется с вами по номеру <span className="font-bold text-slate-800">{formData.phone}</span>.
         </p>
         <button 
           onClick={() => window.location.href = '/'}
@@ -203,15 +207,22 @@ export default function Checkout() {
           <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-4">Ваш заказ</h3>
           
           <div className="max-h-60 overflow-y-auto divide-y divide-slate-200/60 pr-2">
-            {cart.map((item, idx) => (
-              <div key={idx} className="py-3 flex justify-between gap-4 text-xs">
-                <div>
-                  <p className="font-black text-slate-800">{item.name}</p>
-                  <p className="text-slate-400 text-[10px] mt-0.5">{item.weight}</p>
+            {cart.map((item, idx) => {
+              const qty = Number(item.quantity || 1);
+              const itemTotal = parsePrice(item.price) * qty;
+
+              return (
+                <div key={idx} className="py-3 flex justify-between gap-4 text-xs">
+                  <div>
+                    <p className="font-black text-slate-800">
+                      {item.name} <span className="text-slate-400 font-bold ml-1">x{qty}</span>
+                    </p>
+                    <p className="text-slate-400 text-[10px] mt-0.5">{item.weight}</p>
+                  </div>
+                  <span className="font-bold text-slate-900">{itemTotal} ₽</span>
                 </div>
-                <span className="font-bold text-slate-900">{item.price}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="border-t border-slate-200 mt-4 pt-4 space-y-2 text-xs">
