@@ -12,7 +12,7 @@ import Checkout from './pages/Checkout';
 import CookieBanner from './components/CookieBanner';
 
 function ProtectedRoute({ children }) {
-  const isAuthenticated = !!localStorage.getItem('token'); 
+  const isAuthenticated = !!localStorage.getItem('diplom_user'); 
 
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCountry } from '../context/CountryContext';
 
 const DISHES_DATABASE = {
@@ -46,11 +47,12 @@ const DISHES_DATABASE = {
   ]
 };
 
-const PLACEHOLDER_IMAGE = '';
+const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=60';
 
 export default function Menu() {
   const { currentCountry, theme, addToCart } = useCountry();
   const [activeCategory, setActiveCategory] = useState('Все');
+  const navigate = useNavigate();
   
   const allDishes = DISHES_DATABASE[currentCountry] || [];
   
@@ -70,11 +72,11 @@ export default function Menu() {
   };
 
   const handleAddToCartClick = (dish) => {
-    const isAuthenticated = !!localStorage.getItem('token');
+    const isAuthenticated = !!localStorage.getItem('diplom_user');
 
     if (!isAuthenticated) {
       alert('Для добавления блюд в корзину необходимо авторизоваться в системе!');
-      window.location.href = '/auth';
+      navigate('/auth'); 
     } else {
       addToCart(dish);
     }

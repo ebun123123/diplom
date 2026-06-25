@@ -94,7 +94,7 @@ export default function Auth() {
         setError('Пароль слишком короткий!');
         return;
       }
-      registerUser(formData);
+      registerUser(formData); // Внутри этого метода в Context уже есть сохранение в LocalStorage
       alert('Регистрация успешна! Вход в систему выполнен.');
       navigate('/');
     } else {
@@ -107,9 +107,9 @@ export default function Auth() {
       }
     }
   };
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    logoutUser();
+
+  const handleLogoutClick = () => {
+    logoutUser(); // Внутри Context уже стирается нужный ключ 'diplom_user'
     navigate('/auth');
   };
 
@@ -127,7 +127,7 @@ export default function Auth() {
           <p><strong>Токен сессии:</strong> active_local_storage_session</p>
         </div>
 
-        <button onClick={handleLogout} className="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2.5 rounded-lg transition-colors">
+        <button onClick={handleLogoutClick} className="w-full bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2.5 rounded-lg transition-colors">
           Выйти из аккаунта
         </button>
       </div>
