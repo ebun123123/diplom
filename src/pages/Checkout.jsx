@@ -267,7 +267,7 @@ export default function Checkout() {
             <div className="flex justify-between text-slate-500">
               <span>Доставка:</span>
               <span className="font-bold text-slate-800">
-                {deliveryMethod === 'pickup' ? '0 ₽' : deliveryPrice === 0 ? 'Бесплатно' : `${deliveryPrice} ₽`}
+                {deliveryMethod === 'pickup' ? '0 ₽' : deliveryPrice === 0 ? '250р' : `${deliveryPrice} ₽`}
               </span>
             </div>
             <div className="flex justify-between text-base font-black text-slate-900 border-t border-slate-200 mt-4 pt-4">

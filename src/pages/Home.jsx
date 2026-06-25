@@ -13,7 +13,7 @@ export default function Home() {
       alert('Для бронирования столов необходимо авторизоваться в системе!');
       navigate('/auth');
     } else {
-      alert('Вы авторизованы! Переходим к выбору столика.');
+      navigate('/contact');
     }
   };
 
@@ -35,6 +35,7 @@ export default function Home() {
               Посмотреть меню {theme.flag}
             </Link>
             
+
             <button 
               onClick={handleBookingClick}
               className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg transition-all duration-300 active:scale-95"
@@ -42,6 +43,7 @@ export default function Home() {
               Забронировать стол
             </button>
 
+      
             <Link to="/contact" className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-sm px-6 py-3.5 rounded-xl transition-all duration-300">
               Связаться с рестораном
             </Link>
