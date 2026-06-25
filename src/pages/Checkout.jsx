@@ -18,14 +18,46 @@ export default function Checkout() {
     comment: ''
   });
 
+
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const numLength = phoneNumber.length;
+
+    if (numLength === 0) return '';
+
+   
+    let startIdx = 0;
+    if (phoneNumber[0] === '7' || phoneNumber[0] === '8') {
+      startIdx = 1;
+    }
+
+    const digits = phoneNumber.substring(startIdx);
+
+  
+    if (digits.length === 0) return '+7 ';
+    if (digits.length <= 3) return `+7 (${digits}`;
+    if (digits.length <= 6) return `+7 (${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    if (digits.length <= 8) return `+7 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+    
+    return `+7 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8, 10)}`;
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'phone') {
+      setFormData(prev => ({ ...prev, [name]: formatPhoneNumber(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const parsePrice = (priceStr) => {
     return parseInt(priceStr.replace(/[^0-9]/g, ''), 10) || 0;
   };
+
 
   const cartTotal = cart.reduce((sum, item) => {
     const qty = Number(item.quantity || 1);
@@ -51,7 +83,7 @@ export default function Checkout() {
         </div>
         <h2 className="text-2xl font-black text-slate-900">Заказ успешно принят!</h2>
         <p className="text-slate-500 text-xs mt-3 leading-relaxed">
-          Спасибо за заказ. Наш manager свяжется с вами по номеру <span className="font-bold text-slate-800">{formData.phone}</span>.
+          Спасибо за заказ. Наш менеджер свяжется с вами по номеру <span className="font-bold text-slate-800">{formData.phone}</span>.
         </p>
         <button 
           onClick={() => window.location.href = '/'}
@@ -104,6 +136,7 @@ export default function Checkout() {
                   name="phone"
                   required
                   placeholder="+7 (999) 000-00-00"
+                  maxLength={18}
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400 transition-colors" 
@@ -187,7 +220,7 @@ export default function Checkout() {
                   onChange={() => setPaymentMethod('card')}
                   className="w-4 h-4 text-slate-900" 
                 />
-                <span className="text-xs font-bold text-slate-800">Онлайн-оплата картой / СБП</span>
+                <span className="text-xs font-bold text-slate-800">Online-оплата картой / СБП</span>
               </label>
               <label className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer">
                 <input 
@@ -233,7 +266,7 @@ export default function Checkout() {
             <div className="flex justify-between text-slate-500">
               <span>Доставка:</span>
               <span className="font-bold text-slate-800">
-                {deliveryMethod === 'pickup' ? '0 ₽' : deliveryPrice === 0 ? 'Бесплатно' : `${deliveryPrice} ₽`}
+                {deliveryMethod === 'pickup' ? '0 ₽' : deliveryPrice === 0 ? '250р' : `${deliveryPrice} ₽`}
               </span>
             </div>
             <div className="flex justify-between text-base font-black text-slate-900 border-t border-slate-200 mt-4 pt-4">
