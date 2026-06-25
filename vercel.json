@@ -1,36 +1,6 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "build" }
-    },
-    {
-      "src": "backend/config/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxDuration": 25, "runtime": "python3.9" }
-    }
-  ],
   "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "backend/static/$1"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/config/wsgi.py"
-    },
-    {
-      "src": "/admin/(.*)",
-      "dest": "backend/config/wsgi.py"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
   ]
 }
