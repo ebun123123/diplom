@@ -51,7 +51,9 @@ export function CountryProvider({ children }) {
       const existing = prevCart.find((item) => item.id === dish.id);
       if (existing) {
         return prevCart.map((item) =>
-          item.id === dish.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === dish.id 
+            ? { ...item, quantity: Number(item.quantity || 1) + 1 } 
+            : item
         );
       }
       return [...prevCart, { ...dish, quantity: 1 }];
@@ -67,10 +69,11 @@ export function CountryProvider({ children }) {
   const cartTotal = cart.reduce((sum, item) => {
     const priceStr = item.price ? String(item.price) : '0';
     const numericPrice = parseInt(priceStr.replace(/\D/g, ''), 10) || 0;
-    return sum + (numericPrice * (item.quantity || 1));
+    const itemQuantity = Number(item.quantity || 1);
+    return sum + (numericPrice * itemQuantity);
   }, 0);
 
-  const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const cartCount = cart.reduce((sum, item) => sum + Number(item.quantity || 1), 0);
 
   const registerUser = (userData) => {
     localStorage.setItem('diplom_registered_user', JSON.stringify(userData));
@@ -100,11 +103,17 @@ export function CountryProvider({ children }) {
   const createOrder = () => {
     if (cart.length === 0) return false;
     
+    const finalTotal = cart.reduce((sum, item) => {
+      const priceStr = item.price ? String(item.price) : '0';
+      const numericPrice = parseInt(priceStr.replace(/\D/g, ''), 10) || 0;
+      return sum + (numericPrice * Number(item.quantity || 1));
+    }, 0);
+
     const newOrder = {
       id: `ORD-${Date.now()}`,
       date: new Date().toLocaleDateString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
       items: [...cart],
-      total: cartTotal,
+      total: finalTotal,
       userEmail: user ? user.email : 'guest'
     };
 
