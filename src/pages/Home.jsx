@@ -7,7 +7,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleBookingClick = (e) => {
-    const isAuthenticated = !!localStorage.getItem('token');
+    const isAuthenticated = !!localStorage.getItem('diplom_user');
 
     if (!isAuthenticated) {
       alert('Для бронирования столов необходимо авторизоваться в системе!');
@@ -34,7 +34,6 @@ export default function Home() {
             <Link to="/menu" className={`${theme.primaryColor} ${theme.hoverColor} text-white font-bold text-sm px-6 py-3.5 rounded-xl shadow-lg shadow-slate-200 transition-all duration-300 active:scale-95`}>
               Посмотреть меню {theme.flag}
             </Link>
-            
             
             <button 
               onClick={handleBookingClick}
